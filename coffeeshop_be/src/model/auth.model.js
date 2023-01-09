@@ -1,33 +1,59 @@
 const db = require("../helper/connection");
 const { v4: uuidv4 } = require("uuid");
+const bcrypt = require("bcrypt");
+
 const authModel = {
   login: ({ username, password }) => {
+    // console.log(username, password);
     return new Promise((resolve, reject) => {
       db.query(
-        `SELECT * INTO users WHERE username=$1 password=$2`,
+        `SELECT * FROM users WHERE username=$1`,
+        [username],
         (err, result) => {
-          if (err) {
-            return reject(err.message);
-          } else {
-            if (result.row.length == 0) {
-              return reject("USER_NOTFOUNF");
-            } else {
-              return resolve(result.row[0]);
+          //username = unique||email = unique
+          if (err) return reject(err.message);
+          if (result.rows.length == 0)
+            return reject("username/password salah."); //ketika username salah
+          bcrypt.compare(
+            password,
+            result.rows[0].password,
+            (err, hashingResult) => {
+              if (err) return reject(err.message); //kesalahan hashing(bycript)
+              if (!hashingResult) return reject("username/password salah."); //ketika password salah
+              return resolve(result.rows[0]);
             }
-          }
+          );
         }
       );
     });
   },
-  register: ({ username, password }) => {
+  register: ({
+    fullname,
+    username,
+    password,
+    email,
+    address,
+    phone_number,
+    image,
+  }) => {
     return new Promise((resolve, reject) => {
       db.query(
-        `INSERT INTO users (id, email, password, phone_number,name) VALUES ('${uuidv4()}','${email}','${password}','${phone_number}','${name}')`,
+        `INSERT INTO users (id, fullname, username, password, email, address, phone_number, image) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
+        [
+          uuidv4(),
+          fullname,
+          username,
+          password,
+          email,
+          address,
+          phone_number,
+          image,
+        ],
         (err, result) => {
           if (err) {
             return reject(err.message);
           } else {
-            return resolve({ email, password, phone_number, name });
+            return resolve("ADD_SUCCESS");
           }
         }
       );

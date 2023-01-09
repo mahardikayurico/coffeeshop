@@ -9,6 +9,6 @@ router.get("/", (req, res) => {
 });
 router.use("/products", productRoute);
 // router.use("/user", userRoute);
-router.use("/users", authRoute);
+router.use("/auth", authRoute);
 
 module.exports = router; //export, biar bisa diakses oleh file lain melalui require

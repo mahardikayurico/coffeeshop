@@ -1,31 +1,56 @@
 const authModel = require("../model/auth.model");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const { JWT_PRIVATE_KEY } = process.env;
 
 const authController = {
   login: (req, res) => {
     return authModel
       .login(req.body)
       .then((result) => {
-        return res.status(201).send({
-          message: "succes",
-          data: {
-            user: result,
-            token: "ABABASAJE",
-          },
-        });
+        jwt.sign(
+          { id: result.id, role: result.role },
+          JWT_PRIVATE_KEY,
+          (err, token) => {
+            return res.status(200).send({
+              message: "success",
+              data: {
+                token,
+                user: result,
+              },
+            });
+          }
+        );
       })
       .catch((error) => {
         return res.status(500).send({ message: error });
       });
   },
   register: (req, res) => {
-    return authModel
-      .register(req.body)
-      .then((result) => {
-        return res.status(201).send({ message: "succes", data: result });
-      })
-      .catch((error) => {
-        return res.status(500).send({ message: error });
-      });
+    //PR: bikin validasi keseluruhan endpoint
+    bcrypt.hash(req.body.password, 10, (err, hash) => {
+      if (err) {
+        return res.status(500).send({ message: err.message });
+      } else {
+        const request = {
+          fullname: req.body.fullname,
+          username: req.body.username,
+          password: hash,
+          email: req.body.email,
+          address: req.body.address,
+          phone_number: req.body.phone_number,
+          image: req.body.image,
+        };
+        return authModel
+          .register(request)
+          .then((result) => {
+            return res.status(201).send({ message: "succes", data: result });
+          })
+          .catch((error) => {
+            return res.status(500).send({ message: error });
+          });
+      }
+    });
   },
 };
 
