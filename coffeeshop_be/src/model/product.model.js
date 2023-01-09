@@ -1,25 +1,27 @@
 const db = require("../helper/connection");
 const { v4: uuidv4 } = require("uuid");
 const productModel = {
-  query: (queryParams, sortType = "asc", limit = 5) => {
-    if (queryParams.search && queryParams.cat) {
-      return `WHERE title LIKE '%${queryParams.search}%' AND category LIKE '%${queryParams.cat}%' ORDER BY title ${sortType} LIMIT ${limit}`;
-    } else if (queryParams.search || queryParams.cat) {
-      return `WHERE title LIKE '%${queryParams.search}%' OR category LIKE '%${queryParams.cat}%' ORDER BY title ${sortType} LIMIT ${limit}`;
-    } else {
-      return `ORDER BY title ${sortType} LIMIT ${limit}`;
-    }
+  query: (search, category, sortBy, limit, offset) => {
+    let orderQuery = `ORDER BY title ${sortBy} LIMIT ${limit} OFFSET ${offset}`;
 
-    // const {search,cat} = queryParams
-    // return `WHERE title LIKE '%${search}%' ${search && cat ?'AND':'OR'} category LIKE '%${cat}%' ORDER BY title ${sortType}`
+    if (search && category) {
+      return `WHERE title LIKE '%${search}%' AND category LIKE '${category}%' ${orderQuery}`;
+    } else if (search || category) {
+      return `WHERE title LIKE '%${search}%' OR category LIKE '${category}%' ${orderQuery}`;
+    } else {
+      return orderQuery;
+    }
   },
-  get: function (queryParams) {
+
+  get: function (search, category, sortBy = "ASC", limit = 20, offset = 0) {
     return new Promise((resolve, reject) => {
       db.query(
         `SELECT * from products ${this.query(
-          queryParams,
-          queryParams.sortBy,
-          queryParams.limit
+          search,
+          category,
+          sortBy,
+          limit,
+          offset
         )}`,
         (err, result) => {
           if (err) {
@@ -63,7 +65,6 @@ const productModel = {
         if (err) {
           return reject(err.message);
         } else {
-          // const dataUpdate = [result.rows[0].title, result.rows[0].img, result.rows[0].price, result.rows[0].category]
           db.query(
             `UPDATE products SET title='${
               title || result.rows[0].title

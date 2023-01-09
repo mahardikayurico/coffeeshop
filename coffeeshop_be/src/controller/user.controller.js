@@ -1,9 +1,17 @@
 const userModel = require("../model/user.model");
+const Pagination = {
+  page: (page, limit) => {
+    let result = (page - 1) * limit + 1;
+    return result ? result : 0;
+  },
+};
 
 const userController = {
   get: (req, res) => {
+    let { search, name, sortBy, page, limit } = req.query;
+    let offset = Pagination.page(page, limit);
     return userModel
-      .get(req.query)
+      .get(search, name, sortBy, limit, offset)
       .then((result) => {
         return res.status(200).send({ message: "success", data: result });
       })
@@ -12,6 +20,7 @@ const userController = {
       });
   },
   getDetail: (req, res) => {
+    // const id = req.params.id;
     return userModel
       .getDetail(req.params.id)
       .then((result) => {
@@ -21,6 +30,7 @@ const userController = {
         return res.status(500).send({ message: error });
       });
   },
+
   add: (req, res) => {
     return userModel
       .add(req.body)
@@ -46,7 +56,15 @@ const userController = {
       });
   },
   remove: (req, res) => {
-    return userModel;
+    return userModel
+      .remove(req.params.id)
+      .then((result) => {
+        return res.status(200).send({ message: "success", data: result });
+      })
+      .catch((error) => {
+        return res.status(500).send({ message: error });
+      });
   },
 };
+
 module.exports = userController;
