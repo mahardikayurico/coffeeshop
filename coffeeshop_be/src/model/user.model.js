@@ -1,26 +1,26 @@
 const db = require("../helper/connection");
 const { v4: uuidv4 } = require("uuid");
 const userModel = {
-  query: (search, name, sortBy, limit, offset) => {
-    let orderQuery = `ORDER BY name ${sortBy} LIMIT ${limit} OFFSET ${offset}`;
+  query: (search, fullname, sortBy, limit, offset) => {
+    let orderQuery = `ORDER BY fullname ${sortBy} LIMIT ${limit} OFFSET ${offset}`;
 
-    if (!search && !name) {
+    if (!search && !fullname) {
       return orderQuery;
-    } else if (search && name) {
-      return `WHERE name LIKE '%${search}%' AND name LIKE '${name}%' ${orderQuery}`;
-    } else if (search || name) {
-      return `WHERE name LIKE '%${search}%' OR name LIKE '${name}%' ${orderQuery}`;
+    } else if (search && fullname) {
+      return `WHERE fullname LIKE '%${search}%' AND fullname LIKE '${fullname}%' ${orderQuery}`;
+    } else if (search || fullname) {
+      return `WHERE fullname LIKE '%${search}%' OR fullname LIKE '${fullname}%' ${orderQuery}`;
     } else {
       return orderQuery;
     }
   },
 
-  get: function (search, name, sortBy = "ASC", limit = 20, offset = 0) {
+  get: function (search, fullname, sortBy = "ASC", limit = 20, offset = 0) {
     return new Promise((resolve, reject) => {
       db.query(
         `SELECT * from users ${this.query(
           search,
-          name,
+          fullname,
           sortBy,
           limit,
           offset
@@ -47,21 +47,16 @@ const userModel = {
       });
     });
   },
-  add: ({ email, password, phone_number, name }) => {
-    return new Promise((resolve, reject) => {
-      db.query(
-        `INSERT INTO users (id, email, password, phone_number,name) VALUES ('${uuidv4()}','${email}','${password}','${phone_number}','${name}')`,
-        (err, result) => {
-          if (err) {
-            return reject(err.message);
-          } else {
-            return resolve({ email, password, phone_number, name });
-          }
-        }
-      );
-    });
-  },
-  update: ({ id, email, password, phone_number, name }) => {
+  update: ({
+    id,
+    fullname,
+    username,
+    password,
+    email,
+    address,
+    phone_number,
+    image,
+  }) => {
     return new Promise((resolve, reject) => {
       db.query(`SELECT * FROM users WHERE id='${id}'`, (err, result) => {
         if (err) {
@@ -69,13 +64,15 @@ const userModel = {
         } else {
           // const dataUpdate = [result.rows[0].title, result.rows[0].img, result.rows[0].price, result.rows[0].category]
           db.query(
-            `UPDATE users SET email='${
-              email || result.rows[0].email
-            }', password='${
+            `UPDATE users SET fullname='${
+              fullname || result.rows[0].fullname
+            }', username ='${username || result.rows[0].username}', password='${
               password || result.rows[0].password
+            }',email ='${email || result.rows[0].email}',address='${
+              address || result.rows[0].address
             }',phone_number='${
               phone_number || result.rows[0].phone_number
-            }',name='${name || result.rows[0].name}'WHERE id='${id}'`,
+            },image='${image || result.rows[0].image}'WHERE id='${id}'`,
             (err, result) => {
               if (err) {
                 return reject(err.message);

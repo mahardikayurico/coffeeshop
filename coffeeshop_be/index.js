@@ -11,7 +11,8 @@ const router = require("./src/routes/index");
 
 //menerima application/x-www-form-urlencoded
 app.use(urlencoded({ extended: true }));
-
+//untuk menerima images
+app.use(express.static("src"));
 //menerima json
 app.use(json());
 app.use(cors());
@@ -24,6 +25,6 @@ app.get("*", (req, res) => {
     message: "not found",
   });
 });
-app.listen(3000, () => {
-  console.log("backend succesly running on port 3000");
+app.listen(5000, () => {
+  console.log("backend succesly running on port 5000");
 });
