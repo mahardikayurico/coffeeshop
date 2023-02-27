@@ -47,28 +47,63 @@ const productController = {
         return res.status(500).send({ message: error });
       });
   },
+  // update: (req, res) => {
+  //   const request = {
+  //     ...req.body,
+  //     id: req.params.id,
+  //     file: req.files,
+  //   };
+  //   return productModel
+  //     .update(request)
+  //     .then((result) => {
+  //       if (typeof result.oldImages != "undefined") {
+  //         for (let index = 0; index < result.oldImages.length; index++) {
+  //           unlink(
+  //             `src/public/uploads/images/${result.oldImages[index].filename}`
+  //           );
+  //         }
+  //       }
+  //       return res.status(201).send({ message: "succes", data: result });
+  //     })
+  //     .catch((error) => {
+  //       return res.status(500).send({ message: error });
+  //     });
+  // },
   update: (req, res) => {
-    const request = {
-      ...req.body,
-      id: req.params.id,
-      file: req.files,
+    const { id } = req.params;
+    const { title, img, price, category } = req.body;
+    const files = req.files;
+
+    const requestData = {
+      id,
+      title,
+      img,
+      price,
+      category,
+      file: files,
     };
-    return productModel
-      .update(request)
+
+    productModel
+      .update(requestData)
       .then((result) => {
-        if (typeof result.oldImages != "undefined") {
-          for (let index = 0; index < result.oldImages.length; index++) {
-            unlink(
-              `src/public/uploads/images/${result.oldImages[index].filename}`
-            );
+        if (result.oldImages && result.oldImages.length > 0) {
+          for (let i = 0; i < result.oldImages.length; i++) {
+            const imagePath = `src/public/uploads/images/${result.oldImages[i].filename}`;
+            unlink(imagePath, (error) => {
+              if (error)
+                console.log(`Error deleting image ${imagePath}: ${error}`);
+              else console.log(`Image ${imagePath} deleted successfully`);
+            });
           }
         }
-        return res.status(201).send({ message: "succes", data: result });
+        return res.status(200).send({ message: "success", data: result });
       })
       .catch((error) => {
-        return res.status(500).send({ message: error });
+        console.log(`Error updating product: ${error}`);
+        return res.status(500).send({ message: error.message });
       });
   },
+
   remove: (req, res) => {
     return productModel
       .remove(req.params.id)

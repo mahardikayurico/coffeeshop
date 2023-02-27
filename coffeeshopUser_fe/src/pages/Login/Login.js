@@ -27,6 +27,7 @@ const Login = () => {
       .then((res) => {
         console.log(res.data.data);
         localStorage.setItem("@userLogin", JSON.stringify(res.data.data));
+        localStorage.setItem("@userId", res.data.data.user.id);
         navigate("/products");
       })
       .catch((err) => {

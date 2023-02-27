@@ -25,20 +25,20 @@ const CardProducts = (props) => {
   }, []);
 
   return (
-    <div className="mt-10 grid grid-cols-4 gap-7 p-3">
+    <div className="mt-10 grid grid-cols-4 gap-7 p-3 mx-[1rem]">
       {filteredData.map((item) => (
         <div
           onClick={() => navigate(`/products/${item.id}`)}
-          className="card bg-base-100 shadow-xl hover:cursor-pointer "
+          className="card bg-base-100 shadow-xl  hover:cursor-pointer "
         >
           <figure>
             <img
-              className="mask mask-circle max-w-[70%]"
+              className="rounded-full h-28 w-28 shadow-xl mt-2"
               src={`http://localhost:5000/public/uploads/Images/${item.images[0].filename}`}
               alt="Shoes"
             />
           </figure>
-          <div className="card-body  items-center text-center p-1">
+          <div className="card-body  items-center text-center p-1 mt-2 mb-2">
             <h2 className="card-title font-bold">{item.title}</h2>
             <p>IDR {item.price}</p>
           </div>

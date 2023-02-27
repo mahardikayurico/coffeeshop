@@ -5,10 +5,11 @@ import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 
 const ProductsDetails = () => {
-  const [product, setProduct] = React.useState({});
+  const [product, setProduct] = React.useState([]);
+  const [image, setImage] = React.useState(null);
+  const navigate = useNavigate();
 
   const { id } = useParams();
-  const navigate = useNavigate();
 
   const getProductById = (id) => {
     return axios.get(`http://localhost:5000/api/v1/products/${id}`);
@@ -19,6 +20,8 @@ const ProductsDetails = () => {
       .then((response) => {
         // data yang diterima dari server
         setProduct(response.data.data);
+        console.log(response.data.data);
+        setImage(response.data.data.images[0].filename);
       })
       .catch((error) => {
         console.log(error);
@@ -34,7 +37,7 @@ const ProductsDetails = () => {
             <div className=" mx-auto">
               <img
                 className="mask mask-circle max-w-[70%]  mx-auto"
-                src="https://placeimg.com/200/280/arch"
+                src={`http://localhost:5000/public/uploads/Images/${image}`}
                 alt="Shoes"
               />
             </div>

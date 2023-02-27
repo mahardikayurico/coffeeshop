@@ -36,7 +36,6 @@ const userModel = {
     });
   },
   getDetail: (id) => {
-    // const { id } = req.params;
     return new Promise((resolve, reject) => {
       db.query(`SELECT * from users WHERE id='${id}'`, (err, result) => {
         if (err) {
@@ -62,7 +61,6 @@ const userModel = {
         if (err) {
           return reject(err.message);
         } else {
-          // const dataUpdate = [result.rows[0].title, result.rows[0].img, result.rows[0].price, result.rows[0].category]
           db.query(
             `UPDATE users SET fullname='${
               fullname || result.rows[0].fullname
@@ -72,12 +70,21 @@ const userModel = {
               address || result.rows[0].address
             }',phone_number='${
               phone_number || result.rows[0].phone_number
-            },image='${image || result.rows[0].image}'WHERE id='${id}'`,
+            }', image ='${image || result.rows[0].image}' WHERE id='${id}'`,
             (err, result) => {
               if (err) {
                 return reject(err.message);
               } else {
-                return resolve({ id, email, password, phone_number, name });
+                return resolve({
+                  id,
+                  fullname,
+                  username,
+                  password,
+                  email,
+                  address,
+                  phone_number,
+                  image,
+                });
               }
             }
           );
@@ -85,6 +92,87 @@ const userModel = {
       });
     });
   },
+  // update: ({
+  //   id,
+  //   fullname,
+  //   username,
+  //   password,
+  //   email,
+  //   address,
+  //   phone_number,
+  //   img,
+  //   file,
+  // }) => {
+  //   return new Promise((resolve, reject) => {
+  //     db.query(`SELECT * FROM users WHERE id='${id}'`, (err, result) => {
+  //       if (err) {
+  //         return reject(err.message);
+  //       } else {
+  //         db.query(
+  //           `UPDATE users SET fullname='${
+  //             fullname || result.rows[0].fullname
+  //           }', username ='${username || result.rows[0].username}', password='${
+  //             password || result.rows[0].password
+  //           }',email ='${email || result.rows[0].email}',address='${
+  //             address || result.rows[0].address
+  //           }',phone_number='${
+  //             phone_number || result.rows[0].phone_number
+  //           }', img='${img || result.rows[0].img}' WHERE id='${id}'`,
+  //           (err, result) => {
+  //             if (err) {
+  //               return reject(err.message);
+  //             } else {
+  //               if (file.length <= 0)
+  //                 return resolve({
+  //                   id,
+  //                   fullname,
+  //                   username,
+  //                   password,
+  //                   email,
+  //                   address,
+  //                   phone_number,
+  //                 });
+  //               db.query(
+  //                 `SELECT id_images, filename FROM users_images WHERE id_users='${id}'`,
+  //                 (errUsersImages, usersImages) => {
+  //                   if (errUsersImages)
+  //                     return reject({ message: errUsersImages.message });
+  //                   for (let indexNew = 0; indexNew < file.length; indexNew++) {
+  //                     db.query(
+  //                       `UPDATE users_images SET filename=$1 WHERE id_images=$2`,
+  //                       [
+  //                         file[indexNew].filename,
+  //                         usersImages.rows[indexNew].id_images,
+  //                       ],
+  //                       (err, result) => {
+  //                         if (err) {
+  //                           return reject({ message: "images is not deleted" });
+  //                         } else {
+  //                           return resolve({
+  //                             id,
+  //                             fullname,
+  //                             username,
+  //                             password,
+  //                             email,
+  //                             address,
+  //                             phone_number,
+  //                             oldImages: usersImages.rows,
+  //                             images: file,
+  //                           });
+  //                         }
+  //                       }
+  //                     );
+  //                   }
+  //                 }
+  //               );
+  //             }
+  //           }
+  //         );
+  //       }
+  //     });
+  //   });
+  // },
+
   remove: (id) => {
     return new Promise((resolve, reject) => {
       db.query(`DELETE from users WHERE id='${id}'`, (err, result) => {

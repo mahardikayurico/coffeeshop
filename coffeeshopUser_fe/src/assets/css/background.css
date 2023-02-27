@@ -16,7 +16,7 @@
 .profil-bg {
   background: url("../img/bg-profil.svg");
   background-size: cover;
-  height: 100vh;
+  /* height: 100vh; */
 }
 .bg-history {
   background: url("../img/bg-history.svg") no-repeat;

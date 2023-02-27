@@ -79,7 +79,7 @@ const Products = () => {
                 Food
               </li>
               <li
-                onClick={() => setSelectedCategory("food")}
+                onClick={() => setSelectedCategory("add-on")}
                 className="hover:cursor-pointer"
               >
                 add-on

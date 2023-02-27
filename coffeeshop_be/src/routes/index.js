@@ -3,7 +3,7 @@ const router = express();
 const productRoute = require("./product.routes");
 const userRoute = require("./user.routes");
 const authRoute = require("../routes/auth.routes");
-// const cartRoute = require("../routes/cart.routes");
+const orderRoute = require("../routes/order.routes");
 
 router.get("/", (req, res) => {
   return res.send("backend for coffee shop ");
@@ -11,6 +11,6 @@ router.get("/", (req, res) => {
 router.use("/products", productRoute);
 router.use("/user", userRoute);
 router.use("/auth", authRoute);
-// router.use("/cart", cartRoute);
+router.use("/order", orderRoute);
 
 module.exports = router; //export, biar bisa diakses oleh file lain melalui require

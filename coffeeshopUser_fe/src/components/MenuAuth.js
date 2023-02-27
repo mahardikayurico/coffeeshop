@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 const MenuAuth = () => {
   const navigate = useNavigate();
+  const idUser = localStorage.getItem("@userId");
   return (
     <div className="flex flex row ">
       <div className="ml-1">
@@ -23,7 +24,7 @@ const MenuAuth = () => {
       />
       <img
         alt="Profil"
-        onClick={() => navigate("/user")}
+        onClick={() => navigate(`/user/${idUser}`)}
         src={profil}
         className="w-9 rounded-full mx-auto p-1 hover:cursor-pointer"
       />

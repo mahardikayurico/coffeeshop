@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 import {
   HomePages,
   Login,
@@ -14,6 +14,8 @@ import {
 } from "./pages";
 
 const App = () => {
+  //input token and user id
+  // caranya useSelector
   return (
     <BrowserRouter>
       <Routes>
@@ -23,10 +25,10 @@ const App = () => {
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/products" element={<Products />} />
         <Route path="/products/:id" element={<ProductsDetails />} />
-        <Route path="/user" element={<User />} />
+        <Route path="/user/:id" element={<User />} />
         <Route path="/message" element={<Message />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/history" element={<History />} />
+        <Route path="/cart/:id" element={<Cart />} />
+        <Route path="/history/:id" element={<History />} />
       </Routes>
     </BrowserRouter>
   );

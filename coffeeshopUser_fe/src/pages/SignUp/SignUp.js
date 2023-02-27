@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 import logocoffee from "../../assets/img/logo.svg";
@@ -8,29 +8,31 @@ import "../../assets/css/background.css";
 import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
-  const [formData, setFormData] = useState({
+  const [signupForm, setSignupForm] = useState({
     fullname: "",
     username: "",
     password: "",
     email: "",
-    address: "",
-    phone_number: "",
+    // address: "",
+    // phone_number: "",
+    // image: null,
   });
   const [validate, setValidate] = useState({
     error: false,
     message: "",
   });
   const navigate = useNavigate();
-
-  const handleSubmit = (event) => {
+  const handleSignup = (event) => {
     event.preventDefault();
     axios({
       url: "http://localhost:5000/api/v1/auth/register",
       method: "POST",
-      data: formData,
+      data: signupForm,
     })
       .then((res) => {
         console.log(res.data.data);
+        localStorage.setItem("@userLogin", JSON.stringify(res.data.data));
+        localStorage.setItem("@userId", res.data.data.user.id);
         navigate("/products");
       })
       .catch((err) => {
@@ -38,6 +40,48 @@ const SignUp = () => {
       });
   };
 
+  useEffect(() => {
+    if (localStorage.getItem("@userLogin")) {
+      navigate("/products");
+    }
+  });
+
+  // const handleFileChange = (event) => {
+  //   setFormData({ ...formData, image: event.target.files[0] });
+  // };
+
+  // const handleSubmit = (event) => {
+  //   event.preventDefault();
+  //   const form = new FormData();
+  //   form.append("fullname", formData.fullname);
+  //   form.append("username", formData.username);
+  //   form.append("password", formData.password);
+  //   form.append("email", formData.email);
+  //   // form.append("address", formData.address);
+  //   // form.append("phone_number", formData.phone_number);
+  //   // form.append("image", formData.image);
+  //   axios({
+  //     url: "http://localhost:5000/api/v1/auth/register",
+  //     method: "POST",
+  //     data: formData,
+  //     // headers: { "Content-Type": "multipart/form-data" },
+  //   })
+  //     .then((res) => {
+  //       console.log(res.data.data);
+  //       localStorage.setItem("@userId", res.data.data.user.id);
+  //       localStorage.setItem("@userLogin", JSON.stringify(res.data.data));
+
+  //       navigate("/products");
+  //     })
+  //     .catch((err) => {
+  //       setValidate({ error: true, message: err.response.data.message });
+  //     });
+  // };
+  // useEffect(() => {
+  //   if (localStorage.getItem("@userLogin")) {
+  //     navigate("/products");
+  //   }
+  // });
   return (
     <div className="bg-gray-100">
       <main className="container mx-auto flex">
@@ -45,7 +89,7 @@ const SignUp = () => {
         <section className="flex-1 mt-8">
           <div className="flex flex-row">
             <div className="basis-1/2 ml-8">
-              <img className="w-12" src={logocoffee}></img>
+              <img className="w-12" src={logocoffee} alt="logo"></img>
             </div>
             <div className="basis-1/2 ml-36">
               <button
@@ -61,13 +105,20 @@ const SignUp = () => {
               Sign Up
             </h1>
           </div>
-          <form className="mt-10 " onSubmit={handleSubmit}>
+          <form className="mt-10 " onSubmit={handleSignup}>
+            {validate.error && (
+              <div className="alert alert-error shadow-lg w-3/4 mx-auto">
+                <div>
+                  <span>{validate.message}</span>
+                </div>
+              </div>
+            )}
             <div className="flex flex-col py-2 w-3/4 mx-auto ">
               <label>Full Name</label>
               <input
                 onChange={(e) =>
-                  setFormData({
-                    ...formData,
+                  setSignupForm({
+                    ...signupForm,
                     fullname: e.target.value,
                   })
                 }
@@ -79,8 +130,8 @@ const SignUp = () => {
               <label>User Name</label>
               <input
                 onChange={(e) =>
-                  setFormData({
-                    ...formData,
+                  setSignupForm({
+                    ...signupForm,
                     username: e.target.value,
                   })
                 }
@@ -88,25 +139,13 @@ const SignUp = () => {
                 type="text"
               />
             </div>
-            <div className="flex flex-col py-2 w-3/4 mx-auto ">
-              <label>Password</label>
-              <input
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    password: e.target.value,
-                  })
-                }
-                className="border p-2"
-                type="password"
-              />
-            </div>
+
             <div className="flex flex-col py-2 w-3/4 mx-auto ">
               <label>Email Address</label>
               <input
                 onChange={(e) =>
-                  setFormData({
-                    ...formData,
+                  setSignupForm({
+                    ...signupForm,
                     email: e.target.value,
                   })
                 }
@@ -114,7 +153,20 @@ const SignUp = () => {
                 type="email"
               />
             </div>
-            <div className="flex flex-col py-2 w-3/4 mx-auto">
+            <div className="flex flex-col py-2 w-3/4 mx-auto ">
+              <label>Password</label>
+              <input
+                onChange={(e) =>
+                  setSignupForm({
+                    ...signupForm,
+                    password: e.target.value,
+                  })
+                }
+                className="border p-2"
+                type="password"
+              />
+            </div>
+            {/* <div className="flex flex-col py-2 w-3/4 mx-auto">
               <label>Address</label>
               <input
                 onChange={(e) =>
@@ -140,6 +192,14 @@ const SignUp = () => {
                 type="number"
               />
             </div>
+            <div className="flex flex-col py-2 w-3/4 mx-auto">
+              <label>Upload Profil image</label>
+              <input
+                onChange={handleFileChange}
+                className="border p-2"
+                type="file"
+              />
+            </div> */}
             <div className="text-center">
               <button
                 type="submit"

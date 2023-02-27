@@ -1,13 +1,16 @@
 import React from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 
 const ProductsDetails = () => {
-  const [product, setProduct] = React.useState({});
+  const [product, setProduct] = React.useState([]);
+  const [image, setImage] = React.useState(null);
 
   const { id } = useParams();
+  const idUser = localStorage.getItem("@userId");
+  const navigate = useNavigate();
 
   const getProductById = (id) => {
     return axios.get(`http://localhost:5000/api/v1/products/${id}`);
@@ -19,11 +22,13 @@ const ProductsDetails = () => {
         // data yang diterima dari server
         setProduct(response.data.data);
         console.log(response.data.data);
+        setImage(response.data.data.images[0].filename);
       })
       .catch((error) => {
         console.log(error);
       });
   }, [id]);
+  // console.log(product.images[0].filename);
   return (
     <div>
       <div className="bg-gray-100">
@@ -31,20 +36,32 @@ const ProductsDetails = () => {
         <main className="container max-w-5xl mx-auto flex flex-row mt-9  ">
           <section className=" basis-[40%] mt-3">
             <div className=" mx-auto">
+              {/* {product.images &&
+                product.images.map((image) => (
+                  <img
+                    className="rounded-full h-32 w-32 mx-auto"
+                    key={image.id_images}
+                    src={`http://localhost:5000/public/uploads/Images/${image.filename}`}
+                    alt={image.title}
+                  />
+                ))} */}
               <img
-                className="mask mask-circle max-w-[70%]  mx-auto"
-                src={`http://localhost:5000/public/uploads/Images/${product.images[0].filename}`}
+                className="rounded-full h-32 w-32 mx-auto"
+                src={`http://localhost:5000/public/uploads/Images/${image}`}
                 alt="Shoes"
               />
             </div>
             <h1 className="text-center font-extrabold text-5xl text-black">
               {product.title}
             </h1>
-            <h3 className="text-center font-bold text-xl text-black">
+            <h3 className="text-center font-bold text-xl text-black mt-4">
               IDR {product.price}
             </h3>
             <div className="text-center">
-              <button className="btn btn-primary border border-black w-3/4 my-5   py-2 bg-[#6A4029] hover:bg-amber-800 text-white">
+              <button
+                onClick={() => navigate(`/cart/${idUser}`)}
+                className="btn btn-primary border border-black w-3/4 my-5   py-2 bg-[#6A4029] hover:bg-amber-800 text-white"
+              >
                 Add to Cart
               </button>
               <button className="btn btn-primary border border-black w-3/4 my-5   py-2 bg-[#FFBA33] hover:bg-amber-700 text-[#6A4029]">
@@ -107,11 +124,12 @@ const ProductsDetails = () => {
             <div className="">
               <img
                 className="mask mask-circle max-w-[30%]  p-0 mx-auto"
-                src="https://placeimg.com/200/280/arch"
+                src=""
+                // src={`http://localhost:5000/public/uploads/Images/${product.images[0].filename}`}
                 alt="Shoes"
               />
             </div>
-            <div classsName="flex flex-col">
+            <div className="flex flex-col">
               <h1 className="font-bold"> {product.title}</h1>
               <h2>x1 Medium</h2>
               <h2>x1 Reguler</h2>

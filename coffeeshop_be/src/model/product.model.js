@@ -84,6 +84,63 @@ const productModel = {
       );
     });
   },
+  // update: ({ id, title, img, price, category, file }) => {
+  //   return new Promise((resolve, reject) => {
+  //     db.query(`SELECT * FROM products WHERE id='${id}'`, (err, result) => {
+  //       if (err) {
+  //         return reject(err.message);
+  //       } else {
+  //         db.query(
+  //           `UPDATE products SET title='${
+  //             title || result.rows[0].title
+  //           }', img='${img || result.rows[0].img}',price='${
+  //             price || result.rows[0].price
+  //           }', category='${
+  //             category || result.rows[0].category
+  //           }' WHERE id='${id}'`,
+  //           (err, result) => {
+  //             if (err) {
+  //               return reject(err.message);
+  //             } else {
+  //               if (file.length <= 0)
+  //                 return resolve({ id, title, price, category });
+  //               db.query(
+  //                 `SELECT id_images, filename FROM products_images WHERE id_products='${id}'`,
+  //                 (errProductsImages, productsImages) => {
+  //                   if (errProductsImages)
+  //                     return reject({ message: errProductsImages.message });
+  //                   for (let indexNew = 0; indexNew < file.length; indexNew++) {
+  //                     db.query(
+  //                       `UPDATE products_images SET filename=$1 WHERE id_images=$2`,
+  //                       [
+  //                         file[indexNew].filename,
+  //                         productsImages.rows[indexNew].id_images,
+  //                       ],
+  //                       (err, result) => {
+  //                         if (err) {
+  //                           return reject({ message: "images is not deleted" });
+  //                         } else {
+  //                           return resolve({
+  //                             id,
+  //                             title,
+  //                             price,
+  //                             category,
+  //                             oldImages: productsImages.rows,
+  //                             images: file,
+  //                           });
+  //                         }
+  //                       }
+  //                     );
+  //                   }
+  //                 }
+  //               );
+  //             }
+  //           }
+  //         );
+  //       }
+  //     });
+  //   });
+  // },
   update: ({ id, title, img, price, category, file }) => {
     return new Promise((resolve, reject) => {
       db.query(`SELECT * FROM products WHERE id='${id}'`, (err, result) => {
@@ -102,36 +159,40 @@ const productModel = {
               if (err) {
                 return reject(err.message);
               } else {
-                if (file.length <= 0)
-                  return resolve({ id, title, price, category });
                 db.query(
                   `SELECT id_images, filename FROM products_images WHERE id_products='${id}'`,
                   (errProductsImages, productsImages) => {
                     if (errProductsImages)
                       return reject({ message: errProductsImages.message });
-                    for (let indexNew = 0; indexNew < file.length; indexNew++) {
-                      db.query(
-                        `UPDATE products_images SET filename=$1 WHERE id_images=$2`,
-                        [
-                          file[indexNew].filename,
-                          productsImages.rows[indexNew].id_images,
-                        ],
-                        (err, result) => {
-                          if (err) {
-                            return reject({ message: "images is not deleted" });
-                          } else {
-                            return resolve({
-                              id,
-                              title,
-                              price,
-                              category,
-                              oldImages: productsImages.rows,
-                              images: file,
-                            });
-                          }
-                        }
+                    const oldImages = productsImages.rows;
+                    const newImages = file;
+                    if (newImages.length <= 0)
+                      return resolve({ id, title, price, category, oldImages });
+                    Promise.all(
+                      newImages.map((image, indexNew) => {
+                        const idImage = oldImages[indexNew]
+                          ? oldImages[indexNew].id_images
+                          : null;
+                        const filename = image.filename;
+                        return db.query(
+                          `UPDATE products_images SET filename=$1 WHERE id_images=$2`,
+                          [filename, idImage]
+                        );
+                      })
+                    )
+                      .then(() =>
+                        resolve({
+                          id,
+                          title,
+                          price,
+                          category,
+                          oldImages,
+                          newImages,
+                        })
+                      )
+                      .catch((err) =>
+                        reject({ message: "images is not updated" })
                       );
-                    }
                   }
                 );
               }

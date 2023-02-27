@@ -10,7 +10,7 @@ const Cart = () => {
       <div className="cart-bg">
         <main className="container max-w-5xl mx-auto flex flex-row   ">
           <section className=" basis-[50%] mt-3">
-            <h1 className="font-bold text-lg text-white">
+            <h1 className="font-bold text-lg text-white mt-4">
               Checkout your <br />
               item now!
             </h1>
@@ -79,8 +79,8 @@ const Cart = () => {
                 <h2 className="font-bold border-b-2">+62 81348287878</h2>
               </div>
             </div>
-            <h1 className="text-white font-bold">Payment method</h1>
-            <div className="bg-white">
+            <h1 className="text-white font-bold mt-4 ">Payment method</h1>
+            <div className="bg-white mt-3 mr-40 shadow-2xl rounded-lg p-[1rem]">
               <div classsName="flex flex-col">
                 <div className="form-control border-b-2">
                   <label className="label cursor-pointer">
@@ -114,7 +114,7 @@ const Cart = () => {
                 </div>
               </div>
             </div>
-            <div className="text-center">
+            <div className="text-start mr-[3rem]">
               <button
                 type="submit"
                 className=" btn btn-primary border border-black w-3/4 my-5 mx-center  py-2 bg-amber-500 hover:bg-amber-400 text-amber-900"

@@ -37,14 +37,11 @@ const authController = {
           username: req.body.username,
           password: hash,
           email: req.body.email,
-          address: req.body.address,
-          phone_number: req.body.phone_number,
-          image: req.body.image,
         };
         return authModel
           .register(request)
           .then((result) => {
-            return res.status(201).send({ message: "succes", data: result });
+            return res.status(201).send({ message: "success", data: result });
           })
           .catch((error) => {
             return res.status(500).send({ message: error });

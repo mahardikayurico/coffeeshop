@@ -27,38 +27,23 @@ const authModel = {
       );
     });
   },
-  register: ({
-    fullname,
-    username,
-    password,
-    email,
-    address,
-    phone_number,
-    image,
-  }) => {
+  register: ({ fullname, username, password, email }) => {
     return new Promise((resolve, reject) => {
       db.query(
-        `INSERT INTO users (id, fullname, username, password, email, address, phone_number, image) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
-        [
-          uuidv4(),
-          fullname,
-          username,
-          password,
-          email,
-          address,
-          phone_number,
-          image,
-        ],
+        `INSERT INTO users (id, fullname, username, password, email) VALUES ('${uuidv4()}','${fullname}','${username}','${password}','${email}') RETURNING id`,
         (err, result) => {
           if (err) {
             return reject(err.message);
-          } else {
-            return resolve("ADD_SUCCESS");
           }
+          return resolve({
+            fullname,
+            username,
+            password,
+            email,
+          });
         }
       );
     });
   },
 };
-
 module.exports = authModel;

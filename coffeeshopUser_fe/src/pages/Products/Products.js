@@ -6,7 +6,7 @@ import CardProducts from "../../components/Products/CardProducts";
 const Products = () => {
   const [selectedCategory, setSelectedCategory] = React.useState("all");
   return (
-    <div className="bg-gray-100">
+    <div>
       <Header />
       <main className="container max-w-5xl mx-auto flex flex-row  ">
         {/* hero section start */}
