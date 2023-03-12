@@ -14,7 +14,12 @@ const formUpload = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
     let formatType = path.extname(file.originalname);
-    if (formatType == ".png" || formatType == ".jpg" || formatType == ".jpeg") {
+    if (
+      formatType == ".png" ||
+      formatType == ".jpg" ||
+      formatType == ".jpeg" ||
+      formatType == ".webp"
+    ) {
       cb(null, true);
     } else {
       cb("Image not valid", false);

@@ -71,7 +71,7 @@ const productController = {
   // },
   update: (req, res) => {
     const { id } = req.params;
-    const { title, img, price, category } = req.body;
+    const { title, img, price, category, delivery, description } = req.body;
     const files = req.files;
 
     const requestData = {
@@ -80,6 +80,8 @@ const productController = {
       img,
       price,
       category,
+      delivery,
+      description,
       file: files,
     };
 
